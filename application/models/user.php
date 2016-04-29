@@ -8,7 +8,7 @@ class User extends CI_Model
 		parent::__construct();
 		$this->load->library('form_validation');
 		$this->form_validation->set_error_delimiters("<p class='red'>","</p>");
-
+		date_default_timezone_set('America/chicago');
 	}
 
 	public function getUserByEmail($email)
@@ -20,6 +20,7 @@ class User extends CI_Model
 	{
 		$this->form_validation->set_rules("login_email", "email address", "required|valid_email|trim");
 		$this->form_validation->set_rules("login_password", "password", "required|trim");
+
 
 		if ($this->form_validation->run() === true ){
 			return true;
@@ -40,7 +41,6 @@ class User extends CI_Model
 		{
 			// var_dump($user);
 			// die();
-
 			$passwordCompare = md5($user['salt'] + $userData['password']);
 
 			if ($passwordCompare == $user['pwd'])
@@ -59,7 +59,7 @@ class User extends CI_Model
 			}
 			else{
 
-				
+				$this->form_validation->set_message("login_error", "Invalid username or password");
 				return false;
 				// echo ("problem");
 				// die();
@@ -67,6 +67,7 @@ class User extends CI_Model
 		}
 		else
 		{
+			$this->form_validation->set_message("login_error", "Invalid username or password");
 			return false; //username error
 		}
 
@@ -83,23 +84,16 @@ class User extends CI_Model
 		$this->form_validation->set_rules("password", "password", "required|min_length[8]|trim");
 		$this->form_validation->set_rules("conf_password", "confirmation password", "required|matches[password]");
 
-		// $this->form_validation->set_error_delimiters("<p class='red'>", "</p>");
 
-
-		if ($this->form_validation->run() ===false)
-		{
-			
-
-			return false;
-		}
-		else
-		{
-
-			return true;
-		}
+			if ($this->form_validation->run()===false)
+			{
+				return false;
+			} 
+			else
+			{
+				return true;
+			}	
 	}
-
-
 
 	public function getUserById($id)
 	{

@@ -38,8 +38,10 @@
 					<?php echo form_error('conf_password') ?>
 
 					<label class="register">Date of Birth:</label>
-					<input name="dob" type="date" id="date">
+					<input name="dob" type="date" id="date" <?php echo (set_value('dob'));?>>
 					<?php echo form_error('dob') ?>
+
+					<?php if(null!== $this->session->flashdata('dob')){ echo ($this->session->flashdata('dob'));} ?>
 
 					<button class="register primary" type="submit">Register</button>
 					
@@ -54,8 +56,12 @@
 
 				<input class="register"type="password" name="login_password" id="login_password" placeholder="Enter a password - at least 8 characters long">
 				<button class="register primary" type="submit" value="Login">Login</button>
+				<?php echo form_error('login_error') ?>
+				
 				<?php if(null!= $this->session->flashdata('login_error')){ echo($this->session->flashdata('login_error'));} ?>
 			</form>
+			<?php if(null!= $this->session->flashdata('unknown_error')){ echo($this->session->flashdata('unkown_error'));} ?>
+
 		</div>
 	</div>
 </body>

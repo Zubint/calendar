@@ -92,10 +92,10 @@
 							//show there are no appointments
 							echo (
 									"				<tr>
-													<td>No</td>
-													<td>Appointments</td>
-													<td>for </td>
-													<td>Today</td>
+													<td>No Appointments for today</td>
+													<td></td>
+													<td></td>
+													<td></td>
 												</tr>
 												</table>"
 

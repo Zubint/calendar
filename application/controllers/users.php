@@ -38,7 +38,7 @@ class Users extends CI_Controller
 
 	public function login()
 	{
-		if ($this->input->post())
+		if (null!==$this->input->post() && !empty($this->input->post()))		
 		{
 			$userData = array(
 				"email" => $this->input->post('login_email'),
@@ -58,56 +58,65 @@ class Users extends CI_Controller
 				else
 				{
 					$this->session->set_flashdata('login_error', "<p class='red'> Invalid username/password </p>");
-					redirect('/main/index');
+					// redirect('/main/index');
+					redirect('/');
 				}
 			}
 			else{
 				// echo ("false");
 				$this->session->set_flashdata('login_error', "<p class='red'> Invalid username/password </p>");
-				redirect('/main/index');
+				// redirect('/main/index');
+				redirect('/');
 			}
 		}
 		else
 		{
 			//nothing is posted.
 			// return to the login screen
-			$this->session->set_flashdata('login_error', "<p class='red'> Invalid username/password </p>");
-
+			$this->session->set_flashdata('login_error', "<p class='red'> Please enter your login information.  Both fields are required. </p>");
 			redirect('/');
 		}
 	}
+
 
 	public function dob_check($dob)
 	{
 		
 		if(strtotime($this->input->post('dob'))===false)
 		{
-			$this->form_validation->set_message('dob_check', 'The %s field can not be blank');
+			$this->session->set_flashdata('dob', "<p class='red'>The date of birth not be blank</p>");
 			return false;
-		}
-		else
-		{
-			$birthday = new DateTime($dob);
-			$today = new DateTime('now');
-			// var_dump($today);
-			// var_dump($dob);
-			$difference = $today->diff($birthday)->format('%R%a');
-			// echo ("not blank check for > 0");
-			// echo ($difference);
-			// die();
-			if ($difference > 0)
-			{
-			$this->form_validation->set_message('dob_check', 'The %s field can not be in the future');
-			return false;
-			}
 		}
 
 	}
+		public function isFutureDate($strDate)
+	{
+		//returns true if the date provided is in the future
+		//compared to today.
+		$today = date('Y-m-d');
+		$today= new DateTime($today);   //to compare, cast these as date objects
+		$date = new DateTime($strDate); // compare dates without times to ensure the difference in 'days' will be measured.
+
+		// var_dump($today);
+
+		$difference = $today->diff($date);
+		$daysDifference = $difference->format('%R%a');  //returns number of days with +/- indicator, difference is based on
+
+		if ($daysDifference > 0)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
 	public function newUser()
 	{
 
 		//call back validation can only be run in the controller.
-		$this->form_validation->set_rules("dob", "date of birth", 'callback_dob_check');
+		// $this->form_validation->set_rules("dob", "date of birth", 'callback_dob_check');
 		
 		if($this->input->post() !=false)
 		{
@@ -119,10 +128,22 @@ class Users extends CI_Controller
 				"conf_password" => $this->input->post('conf_password')
 				);
 
-				if ($this->User->validateNewUser($userData)==false){
-					$this->load->view('/main/index');//return to the registrations page to show
-					//validation errors.
+				if ($this->dob_check($this->input->post('dob'))===false)
+				{
+					redirect('/');
+				}
 
+				if ($this->isFutureDate($this->input->post('dob'))===true)
+				{
+					$this->form_validation->set_message("dob", " Birthday cannot be in the future");
+					$this->session->set_flashdata("dob", "<p class='red'> Birthday cannot be in the future</p>");
+					redirect('/');
+				}
+
+				if ($this->User->validateNewUser($userData)==false){
+					$this->load->view('/main/index');
+					//return to the registrations page to show
+					//validation errors.
 				}
 				else
 				{
@@ -137,20 +158,23 @@ class Users extends CI_Controller
 							
 							$currentUser['dob'] = $currentUser['birth_date'];
 							 //the database field name is birth_date, and this is returned from a get function.  In order to use set session you need to have an index 'dob';
-
 							$this->setSessionData($currentUser);
 							$this->load->view('/appointments/index');
+							
 						}
 						else
 						{
 							//problem writing to db
+							$this->session->set_flashdata('unknown_error', "There was a problem connecting to the database.  Please try again later.");
 							redirect('/main/index');
+							
 						}
 				}
 		}
 		else
 		{
-			redirect('/');
+			$this->session->set_flashdata('unknown_error', "There was a problem submitting your information to our servers.  Please try again later.");
+				redirect('/main/index');
 			//this is an issue with not getting POST data for one reason or another.	
 		}
 	}

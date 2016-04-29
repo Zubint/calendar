@@ -26,6 +26,26 @@ class Appointment extends CI_Model
 
 	}
 
+	public function isPastDate($strDate)
+	{
+		//returns true if the date provided is earlier than today.
+
+		$date = new DateTime($strDate);
+		$today = date('Y-m-d');
+		$today = new DateTime($today);
+		$difference = $today->diff($date);
+		$daysDifference = $difference->format('%R%a');
+
+		if ($daysDifference < 0)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
 	public function validateUpdateData($appointmentData)
 	{
 
@@ -37,7 +57,6 @@ class Appointment extends CI_Model
 
 				if (strtotime($strDate)===false)	
 				{
-
 					$this->session->set_flashdata('apt_date_error', "<p class='red' >Appointment date is mandatory</p>");
 					$errorCount +=1;
 				}
@@ -47,17 +66,12 @@ class Appointment extends CI_Model
 
 					// var_dump($appointmentData['apt_date']);
 
-					$date = new DateTime($strDate);
-					$today = new DateTime('now');
-
-					$difference = $today->diff($date)->format('%R%a');  //gives you days with a sign either + / - and the total number of days including days in months / years preceeding.  
-
-					
-					if ($difference < 0)
+					if($this->isPastDate($strDate)===true)
 					{
 						$this->session->set_flashdata('apt_date_error', "<p class='red' >Appointment cannot be in the past</p>");
 						$errorCount +=1;
 					}
+
 				}
 
 				$strTime = $appointmentData['time'];
@@ -173,20 +187,14 @@ class Appointment extends CI_Model
 				}
 				else
 				{
-					$appointmentDate = new DateTime($strDate);
-					$today = new DateTime('now');
-
-					$dateCompare = $today->diff($appointmentDate)->format('%R%a');
-
-					if ($dateCompare < 0)
+			
+					if ($this->isPastDate($strDate)===true)
 					{
 						$this->session->set_flashdata('apt_date_error', "<p class='red' >Appointment date cannot be in the past</p>");
 						$errorCount +=1;
 					}
 
 				}
-
-
 
 				$strTime = $appointmentData['time'];
 
