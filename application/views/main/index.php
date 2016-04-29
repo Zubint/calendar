@@ -39,12 +39,7 @@
 
 					<label class="register">Date of Birth:</label>
 					<input name="dob" type="date" id="date">
-					<?php if  (null!==($this->session->flashdata('dob_error'))) 
-						{ 
-							echo ($this->session->flashdata('dob_error'));
-						}
-						?>
-
+					<?php echo form_error('dob') ?>
 
 					<button class="register primary" type="submit">Register</button>
 					

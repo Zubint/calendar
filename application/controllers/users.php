@@ -8,6 +8,7 @@ class Users extends CI_Controller
 		parent::__construct();
 
 		$this->load->model('User');
+		date_default_timezone_set('America/chicago');
 
 	}
 
@@ -76,19 +77,38 @@ class Users extends CI_Controller
 		}
 	}
 
+	public function dob_check($dob)
+	{
+		
+		if(strtotime($this->input->post('dob'))===false)
+		{
+			$this->form_validation->set_message('dob_check', 'The %s field can not be blank');
+			return false;
+		}
+		else
+		{
+			$birthday = new DateTime($dob);
+			$today = new DateTime('now');
+			// var_dump($today);
+			// var_dump($dob);
+			$difference = $today->diff($birthday)->format('%R%a');
+			// echo ("not blank check for > 0");
+			// echo ($difference);
+			// die();
+			if ($difference > 0)
+			{
+			$this->form_validation->set_message('dob_check', 'The %s field can not be in the future');
+			return false;
+			}
+		}
+
+	}
 	public function newUser()
 	{
-		//do basic validation on post data
-		
-		// var_dump($this->input->post());
-		// die();
-		if (strtotime($this->input->post('dob'))===false)
-		{
-			//this is not a valid date
-			$this->session->set_flashdata('dob_error', "<p class='red'> Please select a valid date of birth </p>");
-			redirect('/');
 
-		}
+		//call back validation can only be run in the controller.
+		$this->form_validation->set_rules("dob", "date of birth", 'callback_dob_check');
+		
 		if($this->input->post() !=false)
 		{
 			$userData = array(

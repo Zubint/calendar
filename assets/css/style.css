@@ -50,6 +50,10 @@ h1.nav{
 	text-align: left;
 }
 
+input{
+	margin-top: 25px;
+	margin-bottom: 25px;
+}
 
 label.register {
 	width: 25%;
@@ -227,4 +231,36 @@ ul.no-list-style{
 
 .red{
 	color: red;
+}
+select {
+	display: block;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+label{
+	display: block;
+}
+input{
+	display: block;
+}
+
+table{
+	margin:25px;
+}
+
+tr td {
+	margin: 20px;
+	border: solid 1px green;
+	padding: 5px;
+	vertical-align: center;
+}
+
+th {
+	background-color: silver;
+}
+
+form {
+	display: blcok;
+	margin: 25px;
 }

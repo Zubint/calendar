@@ -16,9 +16,8 @@
 	<body>
 		<div class="wrapper">
 			<div class="nav">
-				<h1 class="nav">Welcome!</h1>
 				<ul id="nav" class="nav-links">
-					<li class="nav-links" id="1" class="visible"><a href="/">Home</a></li>
+					<li class="nav-links" id="1" class="visible"></li>
 					<li class="nav-links" id="2" class="visible"><a href="/users/logout">Logout</a></li>
 				</ul>
 			</div>
@@ -27,10 +26,9 @@
 				<div class="user_info">
 					<!-- <?php // var_dump($user_data); ?> -->
 
-					<h5 class="user_info"> Name: <?=$this->session->userdata['name'] ?></h5>
-					<h4 class="user_info">Email: <?=$this->session->userdata['email'] ?> </h4>
 				</div>
-				<h1> Hello <?= $this->session->userdata('name') ?> here are you appointments for today, <?php echo (date('F-d-Y')); ?> </h1>
+				<h1> Hello <?= $this->session->userdata('name') ?> </h1> 
+				<h2> Here are you appointments for today, <?php echo (date('F-d-Y')); ?> </h2>
 				<table>
 				<tr>
 					<th>Tasks</th>
@@ -45,9 +43,6 @@
 						if (count($all['today'])>0)
 						{
 							//loop through and put it on the form
-
-		
-
 
 							foreach($all['today'] as $today)
 							{
@@ -116,22 +111,26 @@
 				<tr>
 					<th>Tasks</th>
 					<th>Date</th>
-					<th>time</th>
-					<th>Action</th>
+					<th>Time</th>
 				</tr>
 
 				<?php 
+
 						if (isset($all) && count($all['others'])>0)
 						{
 							//loop through
 
+							
+						
+
 							foreach ($all['others'] as $others)
 							{
+								$date =  Date('F d',strtotime($others['date']));
 								echo (
 										"<tr>" . 
 										"<td>" . $others['task'] . "</td>" .
+										"<td>" . $date . "</td>" .
 										"<td>" . $others['time'] . "</td>" .
-										"<td>" . $others['status'] . "</td>" .
 										"</tr>"
 									);
 
@@ -178,7 +177,7 @@
 								echo ($this->session->flashdata('apt_task_error'));
 							}
 							?>
-					<button type="submit">Add task</button>
+					<button type="submit" class="primary">Add task</button>
 				</form>
 							<?php if (null!==$this->session->flashdata('apt_date_dup_error'))
 							{

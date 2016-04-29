@@ -82,7 +82,9 @@ class User extends CI_Model
 		$this->form_validation->set_rules("email", "email", "required|valid_email|is_unique[users.email]trim");
 		$this->form_validation->set_rules("password", "password", "required|min_length[8]|trim");
 		$this->form_validation->set_rules("conf_password", "confirmation password", "required|matches[password]");
+
 		// $this->form_validation->set_error_delimiters("<p class='red'>", "</p>");
+
 
 		if ($this->form_validation->run() ===false)
 		{
@@ -96,6 +98,7 @@ class User extends CI_Model
 			return true;
 		}
 	}
+
 
 
 	public function getUserById($id)
